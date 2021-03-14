@@ -1,0 +1,8 @@
+<div class="form-group">
+    <input type="date" [(ngModel)]="date" (change)="OnDateChange()" max={{today}} class="form-control">
+</div>
+<div class="chart-wrapper" *ngIf="showChart">
+    <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+        [plugins]="lineChartPlugins" [legend]="lineChartLegend" [chartType]="lineChartType">
+    </canvas>
+</div>

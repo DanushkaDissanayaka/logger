@@ -1,0 +1,25 @@
+.footer-link {
+    // position: absolute;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    // margin-left: 20px;
+    color: white;
+    text-align: right;
+    width: 100%;
+    z-index: 999;
+    font-family: 'roboto', sans-serif;
+    letter-spacing: 2px;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+.tm-copyright-text {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0.424);
+    border-radius: 2px;
+
+}

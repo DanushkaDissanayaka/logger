@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
+const moment = require('moment');
+const { Op, Model } = require("sequelize");
+
 
 router.post('/log', function (req, res, next) {
 
@@ -19,18 +22,39 @@ router.post('/log', function (req, res, next) {
 
 router.get('/log', function (req, res, next) {
 
-    return db.sensordata.findAll()
-        .then((data) => res.send(data))
+    var req_date = req.query.date;
+
+    var from = new Date(req_date).setHours(0,0,0,0);
+    var to = new Date(req_date).setHours(23,59,59,999);
+
+    return db.sensordata.findAll(
+        {
+            attributes: ['values', 'createdAt'],
+            where: {
+                createdAt: {
+                    [Op.gt]: from,
+                    [Op.lt]: to
+                }
+            }
+        })
+        .then((data) => {
+
+            var response = { label: [], data: [] }
+            data.forEach(e => {
+                response.data.push(e.values);
+                response.label.push(moment(e.createdAt).format("HH:mm"));
+            });
+            res.send(response)
+        }
+        )
         .catch((err) => {
-            console.log('There was an error querying contacts', JSON.stringify(err))
+            console.log('There was an error querying', JSON.stringify(err))
             return res.send(err)
         });
 });
 
 router.delete('/log/:id', function (req, res, next) {
     var id = req.params.id
-
-    console.log(id);
 
     if (id === undefined || id == null) {
         return res.status(400).send({ error: "Bad request" });
