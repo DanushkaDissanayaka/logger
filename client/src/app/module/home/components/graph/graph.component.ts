@@ -49,7 +49,10 @@ export class GraphComponent implements OnInit {
   getGraphData(date: string): void {
     this._homeService.getGraphData(res => {
       console.log(res);
-      this.lineChartData = [{ data: res.data, label: 'Current', borderColor: '#09828c', pointBackgroundColor: 'black' }];
+      this.lineChartData = [
+        { data: res.battery, label: 'Battery Charging Current', borderColor: '#09828c', pointBackgroundColor: 'black' },
+        { data: res.solar, label: 'Solar Supply Current', borderColor: '#02428c', pointBackgroundColor: 'black' }
+      ];
       this.lineChartLabels = res.label;
       this.showChart = true;
     },
@@ -62,8 +65,4 @@ export class GraphComponent implements OnInit {
     this.showChart = false;
     this.getGraphData(this.date)
   }
-
-
-
-
 }

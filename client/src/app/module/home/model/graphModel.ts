@@ -1,4 +1,5 @@
 export class GraphModel {
     public label!:[]
-    public data!:[]
+    public battery!:[]
+    public solar!:[]
 }
