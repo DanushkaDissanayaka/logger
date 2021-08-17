@@ -10,12 +10,17 @@ router.post('/log', function (req, res, next) {
     const { battery, solar } = req.body
 
     console.log();
-    if (battery === undefined || battery == null||solar === undefined || solar == null) {
+    if (battery === undefined || battery == null || solar === undefined || solar == null) {
         return res.status(400).send({ error: "Bad request" });
     }
 
-    return db.solarchargerdata.create({ battery: battery, solar: solar})
-        .then((data) => res.send(data))
+    return db.solarchargerdata.create({ battery: battery, solar: solar })
+        .then((data) => { 
+            // emit event before response
+            //req.io.emit("some-event", { battery: battery, solar: solar });
+            req.io.sockets.in('user1@example.com').emit('some-event', {msg: 'hello'});
+            res.send(data) 
+        })
         .catch((err) => {
             console.log('There was an error creating a record', JSON.stringify(err))
             return res.status(500).send(err)
@@ -26,12 +31,12 @@ router.get('/log', function (req, res, next) {
 
     var req_date = req.query.date;
 
-    var from = new Date(req_date).setHours(0,0,0,0);
-    var to = new Date(req_date).setHours(23,59,59,999);
+    var from = new Date(req_date).setHours(0, 0, 0, 0);
+    var to = new Date(req_date).setHours(23, 59, 59, 999);
 
     return db.solarchargerdata.findAll(
         {
-            attributes: ['battery','solar', 'createdAt'],
+            attributes: ['battery', 'solar', 'createdAt'],
             where: {
                 createdAt: {
                     [Op.gt]: from,

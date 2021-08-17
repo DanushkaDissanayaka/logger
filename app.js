@@ -2,6 +2,29 @@ const express = require("express");
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser')
+const server = require('http').Server(app);
+const io = require("socket.io")(server, {
+    cors: {
+        origin: 'null',
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+    }
+});
+
+/* setup socket.io */
+app.use(function (req, res, next) {
+    req.io = io;
+    next();
+});
+
+// Store user token id or something if need
+io.sockets.on('connection', function (socket) {
+    console.log("User connected");
+    socket.on('join', function (data) {
+        socket.join(data.email); // We are using room of socket io
+    });
+});
 
 // Api Points
 const api = require('./routes/api')
@@ -27,7 +50,7 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Use api module
-app.use('/api',api);
+app.use('/api', api);
 
 app.use((req, res, next) => {
     const error = new Error('Not Founnd');
@@ -44,5 +67,5 @@ app.use((error, req, res, next) => {
     });
 });
 
-module.exports = app;
+module.exports = server;
 
